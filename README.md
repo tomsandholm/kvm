@@ -3,12 +3,12 @@ kvm builder tools
 
 Variables:
 key variables are:
-     DISTRO:  (xenial|bionic)
-     SWAPSIZE: (GB)
-     DATASIZE: (GB)
-     RAM: (MB)
-     VCPUS: (COUNT)
-     NAME:  fqdn (REQUIRED)
+DISTRO:  (xenial|bionic) 
+SWAPSIZE: (GB) 
+DATASIZE: (GB) 
+RAM: (MB) 
+VCPUS: (COUNT) 
+NAME:  fqdn (REQUIRED) 
 
 Targets
 help    --> This help
