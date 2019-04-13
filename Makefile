@@ -44,6 +44,8 @@ ENV := dev
 SWAPSIZE := 2
 ## in GB
 DATASIZE := 0
+## in GB
+ROOTSIZE := 8
 RAM := 2048
 VCPUS := 2
 OS-VARIANT := ubuntu16.04
@@ -110,7 +112,12 @@ $(IMGDIR)/$(SNAME): $(IMGDIR)/$(SNAME)/rootfs.qcow2
 
 $(IMGDIR)/$(SNAME)/rootfs.qcow2:
 	mkdir -p $(IMGDIR)/$(SNAME)
+ifeq ($(ROOTSIZE),0)
 	qemu-img create -f qcow2 -b $(BASEDIR)/$(DISTRO)/rootfs.qcow2 $(IMGDIR)/$(SNAME)/rootfs.qcow2
+else
+	qemu-img create -f qcow2 -b $(BASEDIR)/$(DISTRO)/rootfs.qcow2 $(IMGDIR)/$(SNAME)/rootfs.qcow2
+	qemu-img resize $(IMGDIR)/$(SNAME)/rootfs.qcow2 $(ROOTSIZE)G
+endif
 	qemu-img info $(IMGDIR)/$(SNAME)/rootfs.qcow2
 
 ## pull all the disk stuff together
@@ -171,7 +178,7 @@ Delete:
 	@:$(call check_defined,NAME)
 	virsh destroy $(SNAME) || echo "Node stop failed for $(SNAME)"
 	virsh undefine $(SNAME) --remove-all-storage
-	rm -rf nodes/$(SNAME)
+	rm -rf $(IMGDIR)/$(SNAME)
 	sudo sed -i "/^$(NAME).*/d" /etc/ansible/hosts
 	make -e NAME=$(NAME) clean-image
 
