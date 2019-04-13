@@ -1,8 +1,8 @@
 # kvm
 kvm builder tools
 
-Variables:
->>> key variables are:
+- Variables:
+key variables are:
      DISTRO:  (xenial|bionic)
      SWAPSIZE: (GB)
      DATASIZE: (GB)
@@ -10,7 +10,7 @@ Variables:
      VCPUS: (COUNT)
      NAME:  fqdn (REQUIRED)
 
->>> Targets
+- Targets
 help    --> This help
 list    --> List currently defined libvirt nodes
 targets --> Produce this listing
@@ -26,7 +26,7 @@ data    --> Create node data disk
 Delete  --> Delete node
 node    --> Create node
 
->>> Tasks:
+Tasks:
 
 Build a node using defaults:
 make -e NAME=some-node-fqdn node
