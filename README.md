@@ -4,12 +4,13 @@ kvm builder tools
 Variables:
 <pre>
 key variables are:
-DISTRO:  (xenial|bionic) 
-SWAPSIZE: (GB) 
-DATASIZE: (GB) 
-RAM: (MB) 
-VCPUS: (COUNT) 
-NAME:  fqdn (REQUIRED) 
+DISTRO:...(xenial|bionic) (default: xenial)
+SWAPSIZE:.(GB) (default: 2)
+DATASIZE:.(GB) (default: 0)
+RAM:......(MB) (default: 2048)
+VCPUS:....(COUNT) (default: 2)
+NAME:.....fqdn (REQUIRED) 
+NET:......(static|dhcp) (default: static)
 
 Targets
 help    --> This help
