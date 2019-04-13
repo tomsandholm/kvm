@@ -2,6 +2,7 @@
 kvm builder tools
 
 Variables:
+<pre>
 key variables are:
 DISTRO:  (xenial|bionic) 
 SWAPSIZE: (GB) 
@@ -40,3 +41,4 @@ make -e NAME=fqdn DISTRO=xenial node
 Delete a node
 make -e NAME=fqdn Delete
 
+</pre>
