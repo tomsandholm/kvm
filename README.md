@@ -1,7 +1,7 @@
 # kvm
 kvm builder tools
 
-- Variables:
+Variables:
 key variables are:
      DISTRO:  (xenial|bionic)
      SWAPSIZE: (GB)
@@ -10,7 +10,7 @@ key variables are:
      VCPUS: (COUNT)
      NAME:  fqdn (REQUIRED)
 
-- Targets
+Targets
 help    --> This help
 list    --> List currently defined libvirt nodes
 targets --> Produce this listing
