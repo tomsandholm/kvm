@@ -104,7 +104,7 @@ $(BASEDIR)/$(DISTRO)/rootfs.qcow2:
 	cp -v $(SRCDIR)/$(DISTRO)/$(SRC) $(BASEDIR)/$(DISTRO)/rootfs.qcow2
 
 ## create a node image
-image:	$(IMGDIR)/$(SNAME)
+image:	base $(IMGDIR)/$(SNAME)
 
 $(IMGDIR)/$(SNAME): $(IMGDIR)/$(SNAME)/rootfs.qcow2
 
