@@ -1,8 +1,14 @@
 # kvm
+<pre>
+
 kvm builder tools
+--------------------------------------------------------------
+This tool will use libvirt and virt-install to provision kvm nodes on Linux.
+This code was built and tested on Ubuntu 18.04.
+The base images are downloaded from Ubuntu cloud using img files.
+The images are configured via cloud-init and a generated cdrom iso.
 
 Variables:
-<pre>
 key variables are:
 DISTRO:...(xenial|bionic) (default: xenial)
 SWAPSIZE:.(GB) (default: 2)
