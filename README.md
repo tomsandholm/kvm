@@ -1,6 +1,5 @@
 # kvm
 <pre>
-
 kvm builder tools
 --------------------------------------------------------------
 This tool will use libvirt and virt-install to provision kvm nodes on Linux.
