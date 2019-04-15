@@ -24,48 +24,93 @@ help:
 	echo ">>> Current nodes ares:"
 	make list
 
-
 list:
 	ls $(IMGDIR)
 	
 targets:
 	sed -n 's/^\([a-Z][a-Z]*\):.*/\1/gp' Makefile
 
+## the distro to build
 DISTRO := xenial
 #DISTRO := bionic
+
+## derived from NAME, a required env variable
 SNAME = $(shell echo $(NAME) | cut -d'.' -f1)
+
+## the URL of where to get THIS $DISTRO
 URL := $(shell egrep "^$(DISTRO)" ./distro | cut -d';' -f3)
+
+## the IMG name of THIS $DISTRO
 SRC := $(shell egrep "^$(DISTRO)" ./distro | cut -d';' -f4)
+
+## stuff
 UUID := $(shell uuidgen)
+
+## get ipaddress of supplied NAME->SNAME
 IPADDRESS := $(shell getent hosts $(SNAME)|awk '{print $$1}')
+
+## what role to give node, populates /etc/role
 ROLE := general
+
+## what env to give node, populates /etc/aenv
 ENV := dev
+
+## swapdisk size
 ## in GB
 SWAPSIZE := 2
+
+## datadisk size
 ## in GB
 DATASIZE := 0
+
+## rootdisk size
 ## in GB
 ROOTSIZE := 8
+
+## guest node ram size
 RAM := 2048
+
+## guest node cpu coount
 VCPUS := 2
+
+## guest node os type
 OS-VARIANT := ubuntu16.04
+
+## where the etc directoy lives
 ETCDIR := /etc/kvmbld
+
+## where we store virtual nodes stuff 
 VARDIR := /var/lib/kvmbld
+
+## base images directory, used as backing store for qcow2 images
 BASEDIR := $(VARDIR)/base
+
+## individual nodes disks
 IMGDIR := $(VARDIR)/images
+
+## where are the source images
 SRCDIR := $(VARDIR)/sources
+
+## either static or dhcp
 NET := static
+
+## command to pass virt-install for swap disk allocation
 SWAPDISK := --disk path=$(IMGDIR)/$(SNAME)/swap.qcow2,device=disk,bus=virtio
+
+## command to pass virt-install for data disk allocation
 DATADISK := --disk path=$(IMGDIR)/$(SNAME)/data.qcow2,device=disk,bus=virtio
 
+## if SWAPSIZE is zero, then do not create SWAPDISK
 ifeq ($(SWAPSIZE),0)
 	SWAPDISK := 
 endif
 
+## if DATADISK is zero, then do not create DATADISK
 ifeq ($(DATASIZE),0)
 	DATADISK :=
 endif
 
+## target to list stuff
 stats:
 	$(info DISTRO:....$(DISTRO))
 	$(info URL:.......$(URL))
