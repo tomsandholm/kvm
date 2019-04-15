@@ -16,7 +16,6 @@ fs_setup:
 
 packages:
   - python
-  - openjdk-8-jdk
   - lsof
   - netcat
   - xinetd
