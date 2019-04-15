@@ -16,6 +16,7 @@ RAM:......(MB) (default: 2048)
 VCPUS:....(COUNT) (default: 2)
 NAME:.....fqdn (REQUIRED) 
 NET:......(static|dhcp) (default: static)
+ROOTSIZE:.(GB) (default: size of image)
 
 Targets
 help    --> This help
