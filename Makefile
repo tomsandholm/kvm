@@ -165,11 +165,18 @@ else
 endif
 	qemu-img info $(IMGDIR)/$(SNAME)/rootfs.qcow2
 
+# configure the user-data PACKAGES base on ROLE setting
+role:	$(IMGDIR)/$(SNAME)/user-data
+
+# install packages-$(ROLE)
+$(IMGDIR)/$(SNAME)/user-data:
+	sed "/PACKAGES/r ./packages-$(ROLE)" user-data.tmpl > user-data
+
 ## pull all the disk stuff together
 disks:	rootfs swap data
 
 ## create our node root disk
-rootfs:	image
+rootfs:	image 
 
 ## create our node swap disk
 swap:	$(IMGDIR)/$(SNAME)/swap.qcow2
@@ -190,7 +197,7 @@ $(IMGDIR)/$(SNAME)/data.qcow2:
 	fi
 
 ## create our installation cdrom
-config.iso:	disks network-config
+config.iso:	role disks network-config
 	genisoimage -o $(IMGDIR)/$(SNAME)/config.iso -V cidata -r -J $(IMGDIR)/$(SNAME)/meta-data $(IMGDIR)/$(SNAME)/user-data $(IMGDIR)/$(SNAME)/network-config
 
 

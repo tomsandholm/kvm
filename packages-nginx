@@ -1,0 +1,10 @@
+# packages-nginx
+packages:
+  - python
+  - lsof
+  - netcat
+  - xinetd
+  - zip
+  - nginx
+  - php
+  - php-cli

@@ -1,0 +1,7 @@
+# packages-general
+packages:
+  - python
+  - lsof
+  - netcat
+  - xinetd
+  - zip
