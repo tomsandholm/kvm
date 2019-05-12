@@ -2,36 +2,23 @@
 #cloud-config
 disable_root: false
 
-disk_setup:
-  swap:
-    table_type: 'mbr'
-    layout: false
-    overwrite: true
-
-fs_setup:
-  - label: None,
-    filesystem: swap
-    device: swap
-    partition: auto
+mounts:
+  - ["/dev/vdb", "none", "swap", "sw", "0", "0"]
 
 #PACKAGES
-# packages-nginx
+# packages-general
 packages:
   - python
   - lsof
   - netcat
   - xinetd
   - zip
-  - mariadb-server
-  - php
-  - php-cli
 
-mounts:
-  - [/dev/vdb, none, swap, sw, 0, 0 ]
-
+# NOTE:  make sure swap is initialized and started
+# NOTE:  only way I could get the swap initialized...?
 bootcmd:
-  - mkswap /dev/vdb
-  - swapon /dev/vdb
+ - mkswap /dev/vdb
+ - swapon /dev/vdb
 
 ntp:
   enabled: true

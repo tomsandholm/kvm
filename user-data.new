@@ -2,16 +2,26 @@
 #cloud-config
 disable_root: false
 
-mounts:
-  - ["/dev/vdb", "none", "swap", "sw", "0", "0"]
+#DISKS
 
 #PACKAGES
+# packages-apache
+packages:
+  - python
+  - lsof
+  - netcat
+  - xinetd
+  - zip
+  - apache2
+  - php
+  - php-cli
 
-# NOTE:  make sure swap is initialized and started
-# NOTE:  only way I could get the swap initialized...?
+mounts:
+  - [/dev/vdb, none, swap, sw, 0, 0 ]
+
 bootcmd:
- - mkswap /dev/vdb
- - swapon /dev/vdb
+  - mkswap /dev/vdb
+  - swapon /dev/vdb
 
 ntp:
   enabled: true
