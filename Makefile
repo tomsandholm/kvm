@@ -170,7 +170,13 @@ role:	$(IMGDIR)/$(SNAME)/user-data
 
 # install packages-$(ROLE)
 $(IMGDIR)/$(SNAME)/user-data:
-	sed "/PACKAGES/r ./packages-$(ROLE)" user-data.tmpl > user-data
+	cp user-data.tmpl user-data.tmp1
+	sed "/PACKAGES/r ./packages-$(ROLE)" user-data.tmpl > user-data.tmp2
+	cp user-data.tmp2 user-data.tmp1
+	sed "/BOOTCMD/r ./bootcmd-$(ROLE).tmpl" user-data.tmp1 > user-data.tmp2
+	cp user-data.tmp2 user-data.tmp1
+	sed "/MOUNTS/r ./mounts-$(ROLE).tmpl" user-data.tmp1 > user-data.tmp2
+	cp user-data.tmp2 user-data
 
 ## pull all the disk stuff together
 disks:	rootfs swap data

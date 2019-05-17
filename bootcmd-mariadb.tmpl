@@ -1,0 +1,7 @@
+bootcmd:
+ - mkswap /dev/vdb
+ - swapon /dev/vdb
+ - pvcreate /dev/vdc
+ - vgcreate vg00 /dev/vdc
+ - lvcreate --name data -l 100%FREE vg00
+ - mkfs.ext4 -j /dev/mapper/vg00-data

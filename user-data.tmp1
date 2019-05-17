@@ -3,9 +3,6 @@
 disable_root: false
 
 #MOUNTS
-mounts:
-  - ["/dev/vdb", "none", "swap", "sw", "0", "0"]
-  - ["/dev/mapper/vg00-data", "/var/lib/mysql", "ext4", "defaults", "1", "1"]
 
 #PACKAGES
 # packages-nginx

@@ -2,16 +2,11 @@
 #cloud-config
 disable_root: false
 
-mounts:
-  - ["/dev/vdb", "none", "swap", "sw", "0", "0"]
+#MOUNTS
 
 #PACKAGES
 
-# NOTE:  make sure swap is initialized and started
-# NOTE:  only way I could get the swap initialized...?
-bootcmd:
- - mkswap /dev/vdb
- - swapon /dev/vdb
+#BOOTCMD
 
 ntp:
   enabled: true
