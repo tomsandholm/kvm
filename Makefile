@@ -128,6 +128,8 @@ clean:
 	rm -rf $(SRCDIR)
 	rm -rf $(BASEDIR)
 	rm -rf $(IMGDIR)
+	rm -rf *.tmp1
+	rm -rf *.tmp2
 
 ## just remove a single image
 clean-image:
