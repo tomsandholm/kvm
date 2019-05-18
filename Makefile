@@ -67,6 +67,14 @@ DATASIZE := 0
 ## in GB
 ROOTSIZE := 8
 
+## database disk size
+## in GB
+DBSIZE := 8
+
+## docroot disk size
+## in GB
+WEBSIZE := 8
+
 ## guest node ram size
 RAM := 2048
 
@@ -100,6 +108,12 @@ SWAPDISK := --disk path=$(IMGDIR)/$(SNAME)/swap.qcow2,device=disk,bus=virtio
 ## command to pass virt-install for data disk allocation
 DATADISK := --disk path=$(IMGDIR)/$(SNAME)/data.qcow2,device=disk,bus=virtio
 
+## command to pass virt-install for database disk allocation
+DBDISK := --disk path=$(IMGDIR)/$(SNAME)/db.qcow2,device=disk,bus=virtio
+
+## command to pass virt-install for document root disk allocation
+WEBDISK := --disk path=$(IMGDIR)/$(SNAME)/docroot.qcow2,device=disk,bus=virtio
+
 ## if SWAPSIZE is zero, then do not create SWAPDISK
 ifeq ($(SWAPSIZE),0)
 	SWAPDISK := 
@@ -109,6 +123,17 @@ endif
 ifeq ($(DATASIZE),0)
 	DATADISK :=
 endif
+
+## if DBSIZE is zero, then do not create DBDISK
+ifeq ($(DBSIZE),0)
+	DBDISK :=
+endif
+
+## if WEBSIZE is zero, then do not create WEBDISK
+ifeq ($(WEBSIZE),0)
+	WEBDISK :=
+endif
+
 
 ## target to list stuff
 stats:
@@ -181,7 +206,7 @@ $(IMGDIR)/$(SNAME)/user-data:
 	cp user-data.tmp2 user-data
 
 ## pull all the disk stuff together
-disks:	rootfs swap data
+disks:	rootfs swap data db web
 
 ## create our node root disk
 rootfs:	image 
@@ -203,6 +228,23 @@ $(IMGDIR)/$(SNAME)/data.qcow2:
 	if [ $(DATASIZE) -gt 0 ]; then \
 		qemu-img create -f qcow2 $(IMGDIR)/$(SNAME)/data.qcow2 $(DATASIZE)G; \
 	fi
+
+db:	$(IMGDIR)/$(SNAME)/db.qcow2
+
+$(IMGDIR)/$(SNAME)/db.qcow2:
+	mkdir -p $(IMGDIR)/$(SNAME)
+	if [ $(DBSIZE) -gt 0 ]; then \
+		qemu-img create -f qcow2 $(IMGDIR)/$(SNAME)/db.qcow2 $(DBSIZE)G; \
+	fi
+
+web:	$(IMGDIR)/$(SNAME)/docroot.qcow2
+
+$(IMGDIR)/$(SNAME)/docroot.qcow2:
+	mkdir -p $(IMGDIR)/$(SNAME)
+	if [ $(WEBSIZE) -gt 0 ]; then \
+		qemu-img create -f qcow2 $(IMGDIR)/$(SNAME)/docroot.qcow2 $(WEBSIZE)G; \
+	fi
+
 
 ## create our installation cdrom
 config.iso:	role disks network-config
@@ -246,7 +288,7 @@ Delete:
 node:	config.iso
 	@:$(call check_defined,NAME)
 
-	virt-install --connect=qemu:///system --name $(SNAME) --ram $(RAM) --vcpus=$(VCPUS) --os-type=linux --os-variant=ubuntu16.04 --disk path=$(IMGDIR)/$(SNAME)/rootfs.qcow2,device=disk,bus=virtio $(SWAPDISK) $(DATADISK) --disk path=$(IMGDIR)/$(SNAME)/config.iso,device=cdrom --graphics none --import --wait=-1
+	virt-install --connect=qemu:///system --name $(SNAME) --ram $(RAM) --vcpus=$(VCPUS) --os-type=linux --os-variant=ubuntu16.04 --disk path=$(IMGDIR)/$(SNAME)/rootfs.qcow2,device=disk,bus=virtio $(SWAPDISK) $(DATADISK) $(DBDISK) $(WEBDISK) --disk path=$(IMGDIR)/$(SNAME)/config.iso,device=cdrom --graphics none --import --wait=-1
 	sudo echo "$(NAME)" >> /etc/ansible/hosts
 	virsh start $(SNAME)
 

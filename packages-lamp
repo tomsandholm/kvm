@@ -1,0 +1,11 @@
+# packages-lamp
+packages:
+  - python
+  - lsof
+  - netcat
+  - xinetd
+  - zip
+  - apache2
+  - mariadb-server
+  - php
+  - php-cli

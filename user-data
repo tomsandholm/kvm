@@ -5,16 +5,18 @@ disable_root: false
 #MOUNTS
 mounts:
   - ["/dev/vdb", "none", "swap", "sw", "0", "0"]
-  - ["/dev/mapper/vg00-data", "/var/lib/mysql", "ext4", "defaults", "1", "1"]
+  - ["/dev/mapper/vgdb-db", "/var/lib/mysql", "ext4", "defaults", "1", "1"]
+  - ["/dev/mapper/vgweb-dr", "/var/www/html", "ext4", "defaults", "1", "1"]
 
 #PACKAGES
-# packages-nginx
+# packages-lamp
 packages:
   - python
   - lsof
   - netcat
   - xinetd
   - zip
+  - apache2
   - mariadb-server
   - php
   - php-cli
@@ -24,9 +26,13 @@ bootcmd:
  - mkswap /dev/vdb
  - swapon /dev/vdb
  - pvcreate /dev/vdc
- - vgcreate vg00 /dev/vdc
- - lvcreate --name data -l 100%FREE vg00
- - mkfs.ext4 -j /dev/mapper/vg00-data
+ - vgcreate vgdb /dev/vdc
+ - lvcreate --name db -l 100%FREE vgdb
+ - mkfs.ext4 -j /dev/mapper/vgdb-db
+ - pvcreate /dev/vdd
+ - vgcreate vgweb /dev/vdd
+ - lvcreate --name dr -l 100%FREE vgweb
+ - mkfs.ext4 -j /dev/mapper/vgweb-dr
 
 ntp:
   enabled: true
