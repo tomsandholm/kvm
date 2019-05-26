@@ -5,7 +5,9 @@ packages:
   - netcat
   - xinetd
   - zip
-  - apache2
+  - debconf-utils
   - mariadb-server
+  - apache2
   - php
   - php-cli
+

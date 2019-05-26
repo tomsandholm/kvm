@@ -6,5 +6,6 @@ packages:
   - xinetd
   - zip
   - mariadb-server
+  - rsync
   - php
   - php-cli

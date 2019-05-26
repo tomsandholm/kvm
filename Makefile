@@ -17,6 +17,7 @@ help:
 	echo "     RAM: (MB)"
 	echo "     VCPUS: (COUNT)"
 	echo "     NAME:  fqdn (REQUIRED)"
+	echo "     NAME:  fqdn (REQUIRED)"
 	echo ""
 	echo ">>> Targets"
 	make targets
@@ -203,6 +204,10 @@ $(IMGDIR)/$(SNAME)/user-data:
 	sed "/BOOTCMD/r ./bootcmd-$(ROLE).tmpl" user-data.tmp1 > user-data.tmp2
 	cp user-data.tmp2 user-data.tmp1
 	sed "/MOUNTS/r ./mounts-$(ROLE).tmpl" user-data.tmp1 > user-data.tmp2
+	cp user-data.tmp2 user-data.tmp1
+	sed "/RUNCMD/r ./runcmd-$(ROLE).tmpl" user-data.tmp1 > user-data.tmp2
+	cp user-data.tmp2 user-data.tmp1
+	sed "/APT/r ./apt-$(ROLE).tmpl" user-data.tmp1 > user-data.tmp2
 	cp user-data.tmp2 user-data
 
 ## pull all the disk stuff together
