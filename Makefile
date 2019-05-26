@@ -102,6 +102,7 @@ SRCDIR := $(VARDIR)/sources
 
 ## either static or dhcp
 NET := static
+#NET := dhcp
 
 ## command to pass virt-install for swap disk allocation
 SWAPDISK := --disk path=$(IMGDIR)/$(SNAME)/swap.qcow2,device=disk,bus=virtio
