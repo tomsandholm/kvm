@@ -77,10 +77,10 @@ DBSIZE := 8
 WEBSIZE := 8
 
 ## guest node ram size
-RAM := 2048
+RAM := 1024
 
 ## guest node cpu coount
-VCPUS := 2
+VCPUS := 1
 
 ## guest node os type
 OS-VARIANT := ubuntu16.04
@@ -103,6 +103,15 @@ SRCDIR := $(VARDIR)/sources
 ## either static or dhcp
 NET := static
 #NET := dhcp
+
+## mariadb galera cluster node count
+GC := 0
+
+## galera cluster nodename prefix
+GCPREFIX := db
+
+## galera cluster node suffix start
+GCBEGIN := 01
 
 ## command to pass virt-install for swap disk allocation
 SWAPDISK := --disk path=$(IMGDIR)/$(SNAME)/swap.qcow2,device=disk,bus=virtio
@@ -135,6 +144,7 @@ endif
 ifeq ($(WEBSIZE),0)
 	WEBDISK :=
 endif
+
 
 
 ## target to list stuff

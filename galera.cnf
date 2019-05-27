@@ -8,7 +8,7 @@ wsrep_on=ON
 wsrep_provider=/usr/lib/galera/libgalera_smm.so
 # Galera Cluster Configuration
 wsrep_cluster_name="galera_cluster"
-wsrep_cluster_address="gcomm://IP01,IP02,IP03"
+wsrep_cluster_address="gcomm://NODE1,NODE2,NODE3"
 
 # Galera Synchronization Configuration
 wsrep_sst_method=rsync

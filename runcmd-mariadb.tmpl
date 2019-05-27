@@ -4,6 +4,6 @@ runcmd:
   - update-grub
   - apt autoremove -y
   - touch /etc/cloud/cloud-init.disabled
-  - [ mysql -u root, "USE mysql;", "UPDATE user SET password=PASSWORD('theresa1') WHERE User='root' AND Host = 'localhost';" , "FLUSH PRIVILEGES;", "exit;" ]
+  - mysqladmin -u root password theresa1 
   - eject
   - shutdown -h now
