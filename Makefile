@@ -1,4 +1,5 @@
 MAKEFLAGS += --silent
+SHELL = /bin/bash
 
 .PHONEY:	help
 
@@ -108,7 +109,7 @@ NET := static
 GC := 0
 
 ## galera cluster nodename prefix
-GCPREFIX := db
+GCPREFIX := 
 
 ## galera cluster node suffix start
 GCBEGIN := 01
@@ -272,6 +273,9 @@ network-config:	meta-data $(IMGDIR)/$(SNAME)/network-config
 
 $(IMGDIR)/$(SNAME)/network-config:
 ifeq ($(NET),static)
+ifeq ($(IPADDRESS),)
+	$(error NET is static yet IPADDRESS is NULL)
+endif
 	cp network-config-static.tmpl $(IMGDIR)/$(SNAME)/network-config
 	sed -i "s/<IPADDRESS>/$(IPADDRESS)/g" $(IMGDIR)/$(SNAME)/network-config
 endif
@@ -308,4 +312,17 @@ node:	config.iso
 	sudo echo "$(NAME)" >> /etc/ansible/hosts
 	virsh start $(SNAME)
 
+galera:
+ifeq ($(GC),0)
+	$(error called galera with zero GC)
+endif
+ifeq ($(GCPREFIX),)
+	$(error called galera with no GCPREFIX)
+endif
+	current=1; while [[ $$current -le $(GC) ]] ; do \
+	NAME=$(GCPREFIX)`printf "%03d\n"  $$current` ; \
+	echo $$NAME ; \
+	make -e NAME=$$NAME ROLE=mariadb node ; \
+	((current = current + 1)) ; \
+	done
 
