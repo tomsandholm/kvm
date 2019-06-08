@@ -1,0 +1,36 @@
+totem {
+  version: 2
+  transport: udpu
+  interface {
+    ringnumber: 0
+    bindnetaddr: 10.0.0.152
+    broadcast: yes
+    mcastport: 5405
+  }
+}
+
+quorum {
+  provier: corosync_votequorum
+  two_node: 1
+}
+
+nodelist {
+  node {
+    ring0_addr: 10.0.0.151
+    name: primary
+    nodeid: 1
+  }
+  node {
+    ring0_addr: 10.0.0.152
+    name: secondary
+    nodeid: 2
+  }
+}
+
+logging {
+  to_logfile: yes
+  logfile: /var/log/corosync/corosync.log
+  to_syslog: yes
+  timestamp: on
+}
+

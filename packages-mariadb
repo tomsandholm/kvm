@@ -1,6 +1,5 @@
 # packages-nginx
 packages:
-  - python
   - python3
   - lsof
   - netcat

@@ -5,36 +5,22 @@ disable_root: false
 #MOUNTS
 mounts:
   - ["/dev/vdb", "none", "swap", "sw", "0", "0"]
-  - ["/dev/mapper/vgdb-db", "/var/lib/mysql", "ext4", "defaults", "1", "1"]
 
 #PACKAGES
-# packages-nginx
+# packages-general
 packages:
-  - python
+  - python3
   - lsof
   - netcat
   - xinetd
   - zip
-  - mariadb-server
-  - rsync
-  - php
-  - php-cli
 
 #BOOTCMD
 bootcmd:
  - mkswap /dev/vdb
  - swapon /dev/vdb
- - pvcreate /dev/vdc
- - vgcreate vgdb /dev/vdc
- - lvcreate --name db -l 100%FREE vgdb
- - mkfs.ext4 -j /dev/mapper/vgdb-db
 
 #APT
-apt:
-  sources:
-    mariadb.list:
-      source: "deb [arch=amd64] http://mirrors.accretive-networks.net/mariadb/repo/10.3/ubuntu xenial main"
-      keyid: F1656F24C74CD1D8
 
 ntp:
   enabled: true
@@ -67,6 +53,5 @@ runcmd:
   - update-grub
   - apt autoremove -y
   - touch /etc/cloud/cloud-init.disabled
-  - mysqladmin -u root password theresa1 
   - eject
   - shutdown -h now

@@ -5,3 +5,5 @@ packages:
   - netcat
   - xinetd
   - zip
+  - pacemaker
+  - haveged
