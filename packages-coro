@@ -1,4 +1,4 @@
-# packages-general
+# packages-coro
 packages:
   - python3
   - lsof
@@ -7,3 +7,4 @@ packages:
   - zip
   - pacemaker
   - haveged
+  - corosync

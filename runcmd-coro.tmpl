@@ -3,6 +3,7 @@ runcmd:
   - echo '{{ ds.meta_data.aenv }}' > /etc/aenv
   - update-grub
   - corosync-keygen
+  - [ mkdir .ssh, cd .ssh, ssh-keygen -t rsa -N '' -f ./id_rsa, cat ./id_rsa.pub >> ./authorized_keys ]
   - apt autoremove -y
   - touch /etc/cloud/cloud-init.disabled
   - eject

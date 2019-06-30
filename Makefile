@@ -114,6 +114,15 @@ GCPREFIX :=
 ## galera cluster node suffix start
 GCBEGIN := 01
 
+## corosync node prefix
+CSPREFIX := $(SNAME)
+
+## corosync primary node ip
+CSPRIMARY := $(SNAME)1
+
+## corosync secondary node ip
+CSSECONDARY := $(SNAME)2
+
 ## command to pass virt-install for swap disk allocation
 SWAPDISK := --disk path=$(IMGDIR)/$(SNAME)/swap.qcow2,device=disk,bus=virtio
 
@@ -317,7 +326,7 @@ node:	config.iso
 	@:$(call check_defined,NAME)
 
 	virt-install --connect=qemu:///system --name $(SNAME) --ram $(RAM) --vcpus=$(VCPUS) --os-type=linux --os-variant=ubuntu16.04 --disk path=$(IMGDIR)/$(SNAME)/rootfs.qcow2,device=disk,bus=virtio $(SWAPDISK) $(DATADISK) $(DBDISK) $(WEBDISK) --disk path=$(IMGDIR)/$(SNAME)/config.iso,device=cdrom --graphics none --import --wait=-1
-	sudo echo "$(NAME)" >> /etc/ansible/hosts
+	sudo echo "$(NAME) ansible_python_interpreter=\"/usr/bin/python3\"" >> /etc/ansible/hosts
 	virsh start $(SNAME)
 
 galera:
@@ -333,4 +342,8 @@ endif
 	make -e NAME=$$NAME ROLE=mariadb node ; \
 	((current = current + 1)) ; \
 	done
+
+coro:
+	@:$(call check_defined,NAME)
+	make -e NAME=$$NAME ROLE=coro node
 

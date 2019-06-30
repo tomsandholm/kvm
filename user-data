@@ -14,8 +14,6 @@ packages:
   - netcat
   - xinetd
   - zip
-  - pacemaker
-  - haveged
 
 #BOOTCMD
 bootcmd:
