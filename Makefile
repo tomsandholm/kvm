@@ -33,8 +33,8 @@ targets:
 	sed -n 's/^\([a-Z][a-Z]*\):.*/\1/gp' Makefile
 
 ## the distro to build
-DISTRO := xenial
-#DISTRO := bionic
+#DISTRO := xenial
+DISTRO := bionic
 
 ## derived from NAME, a required env variable
 SNAME = $(shell echo $(NAME) | cut -d'.' -f1)
@@ -105,11 +105,17 @@ SRCDIR := $(VARDIR)/sources
 NET := static
 #NET := dhcp
 
+## mariadb remote user
+REMUSER := remote
+
+## mariadb remote user password
+REMUSERPSW := changeme
+
 ## mariadb galera cluster node count
 GC := 0
 
 ## galera cluster nodename prefix
-GCPREFIX := 
+GCPREFIX := "none"
 
 ## galera cluster node suffix start
 GCBEGIN := 01
@@ -220,7 +226,7 @@ role:	$(IMGDIR)/$(SNAME)/user-data
 # install packages-$(ROLE)
 $(IMGDIR)/$(SNAME)/user-data:
 	cp user-data.tmpl user-data.tmp1
-	sed "/PACKAGES/r ./packages-$(ROLE)" user-data.tmpl > user-data.tmp2
+	sed "/PACKAGES/r ./packages-$(ROLE)" user-data.tmp1 > user-data.tmp2
 	cp user-data.tmp2 user-data.tmp1
 	sed "/BOOTCMD/r ./bootcmd-$(ROLE).tmpl" user-data.tmp1 > user-data.tmp2
 	cp user-data.tmp2 user-data.tmp1
@@ -302,6 +308,10 @@ $(IMGDIR)/$(SNAME)/meta-data:
 	echo "local-hostname: $(NAME)" >> $(IMGDIR)/$(SNAME)/meta-data
 	echo "public-keys: " >> $(IMGDIR)/$(SNAME)/meta-data
 	echo "- `cat $(HOME)/.ssh/id_rsa.pub`" >> $(IMGDIR)/$(SNAME)/meta-data
+ifeq ($(ROLE),mariadb)
+	echo "remuser: $(REMUSER)" >> $(IMGDIR)/$(SNAME)/meta-data
+	echo "remuserpsw: $(REMUSERPSW)" >> $(IMGDIR)/$(SNAME)/meta-data
+endif 
 	cp user-data $(IMGDIR)/$(SNAME)/user-data
 
 ## delete our node
