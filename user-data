@@ -6,6 +6,7 @@ disable_root: false
 mounts:
   - ["/dev/vdb", "none", "swap", "sw", "0", "0"]
   - ["/dev/mapper/vgdb-db", "/var/lib/mysql", "ext4", "defaults", "1", "1"]
+  - ["/dev/mapper/vgdblog-dblog", "/var/log/mysql", "ext4", "defaults", "1", "1"]
 
 #PACKAGES
 # packages-nginx
@@ -28,6 +29,10 @@ bootcmd:
  - vgcreate vgdb /dev/vdc
  - lvcreate --name db -l 100%FREE vgdb
  - mkfs.ext4 -j /dev/mapper/vgdb-db
+ - pvcreate /dev/vdd
+ - vgcreate vgdblog /dev/vdd
+ - lvcreate --name dblog -l 100%FREE vgdblog
+ - mkfs.ext4 -j /dev/mapper/vgdblog-dblog
 
 #APT
 apt:

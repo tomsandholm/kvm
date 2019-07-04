@@ -1,0 +1,84 @@
+list is 
+out is 
+cp user-data.tmpl user-data.tmp1
+sed "/PACKAGES/r ./packages-mariadb" user-data.tmp1 > user-data.tmp2
+cp user-data.tmp2 user-data.tmp1
+sed "/BOOTCMD/r ./bootcmd-mariadb.tmpl" user-data.tmp1 > user-data.tmp2
+cp user-data.tmp2 user-data.tmp1
+sed "/MOUNTS/r ./mounts-mariadb.tmpl" user-data.tmp1 > user-data.tmp2
+cp user-data.tmp2 user-data.tmp1
+sed "/RUNCMD/r ./runcmd-mariadb.tmpl" user-data.tmp1 > user-data.tmp2
+cp user-data.tmp2 user-data.tmp1
+sed "/APT/r ./apt-mariadb.tmpl" user-data.tmp1 > user-data.tmp2
+cp user-data.tmp2 user-data
+mkdir -p /var/lib/kvmbld/images/db000
+qemu-img create -f qcow2 -b /var/lib/kvmbld/base/bionic/rootfs.qcow2 /var/lib/kvmbld/images/db000/rootfs.qcow2
+Formatting '/var/lib/kvmbld/images/db000/rootfs.qcow2', fmt=qcow2 size=2361393152 backing_file=/var/lib/kvmbld/base/bionic/rootfs.qcow2 cluster_size=65536 lazy_refcounts=off refcount_bits=16
+qemu-img resize /var/lib/kvmbld/images/db000/rootfs.qcow2 6G
+Image resized.
+qemu-img info /var/lib/kvmbld/images/db000/rootfs.qcow2
+image: /var/lib/kvmbld/images/db000/rootfs.qcow2
+file format: qcow2
+virtual size: 6.0G (6442450944 bytes)
+disk size: 200K
+cluster_size: 65536
+backing file: /var/lib/kvmbld/base/bionic/rootfs.qcow2
+Format specific information:
+    compat: 1.1
+    lazy refcounts: false
+    refcount bits: 16
+    corrupt: false
+mkdir -p /var/lib/kvmbld/images/db000
+if [ 2 -gt 0 ]; then \
+	qemu-img create -f qcow2 /var/lib/kvmbld/images/db000/swap.qcow2 2G; \
+fi
+Formatting '/var/lib/kvmbld/images/db000/swap.qcow2', fmt=qcow2 size=2147483648 cluster_size=65536 lazy_refcounts=off refcount_bits=16
+mkdir -p /var/lib/kvmbld/images/db000
+if [ 0 -gt 0 ]; then \
+	qemu-img create -f qcow2 /var/lib/kvmbld/images/db000/data.qcow2 0G; \
+fi
+mkdir -p /var/lib/kvmbld/images/db000
+if [ 8 -gt 0 ]; then \
+	qemu-img create -f qcow2 /var/lib/kvmbld/images/db000/db.qcow2 8G; \
+fi
+Formatting '/var/lib/kvmbld/images/db000/db.qcow2', fmt=qcow2 size=8589934592 cluster_size=65536 lazy_refcounts=off refcount_bits=16
+mkdir -p /var/lib/kvmbld/images/db000
+if [ 4 -gt 0 ]; then \
+	qemu-img create -f qcow2 /var/lib/kvmbld/images/db000/dblog.qcow2 4G; \
+fi
+Formatting '/var/lib/kvmbld/images/db000/dblog.qcow2', fmt=qcow2 size=4294967296 cluster_size=65536 lazy_refcounts=off refcount_bits=16
+mkdir -p /var/lib/kvmbld/images/db000
+if [ 0 -gt 0 ]; then \
+	qemu-img create -f qcow2 /var/lib/kvmbld/images/db000/docroot.qcow2 0G; \
+fi
+echo "instance-id: cf7d3f4d-e632-48f2-825f-4ad651a432a6" > /var/lib/kvmbld/images/db000/meta-data
+echo "role: mariadb" >> /var/lib/kvmbld/images/db000/meta-data
+echo "aenv: dev" >> /var/lib/kvmbld/images/db000/meta-data
+echo "local-hostname: db000.tsand.org" >> /var/lib/kvmbld/images/db000/meta-data
+echo "public-keys: " >> /var/lib/kvmbld/images/db000/meta-data
+echo "- `cat /root/.ssh/id_rsa.pub`" >> /var/lib/kvmbld/images/db000/meta-data
+echo "remuser: tom" >> /var/lib/kvmbld/images/db000/meta-data
+echo "remuserpsw: theresa1" >> /var/lib/kvmbld/images/db000/meta-data
+cp user-data /var/lib/kvmbld/images/db000/user-data
+cp network-config-static.tmpl /var/lib/kvmbld/images/db000/network-config
+sed -i "s/<IPADDRESS>/10.0.0.200/g" /var/lib/kvmbld/images/db000/network-config
+genisoimage -o /var/lib/kvmbld/images/db000/config.iso -V cidata -r -J /var/lib/kvmbld/images/db000/meta-data /var/lib/kvmbld/images/db000/user-data /var/lib/kvmbld/images/db000/network-config
+I: -input-charset not specified, using utf-8 (detected in locale settings)
+Total translation table size: 0
+Total rockridge attributes bytes: 417
+Total directory bytes: 0
+Path table size(bytes): 10
+Max brk space used 0
+185 extents written (0 MB)
+virt-install --connect=qemu:///system --name db000 --ram 1024 --vcpus=1 --os-type=linux --os-variant=ubuntu16.04 --disk path=/var/lib/kvmbld/images/db000/rootfs.qcow2,device=disk,bus=virtio --disk path=/var/lib/kvmbld/images/db000/swap.qcow2,device=disk,bus=virtio  --disk path=/var/lib/kvmbld/images/db000/db.qcow2,device=disk,bus=virtio --disk path=/var/lib/kvmbld/images/db000/dblog.qcow2,device=disk,bus=virtio  --disk path=/var/lib/kvmbld/images/db000/config.iso,device=cdrom --graphics none --import --wait=-1
+WARNING  CDROM media does not print to the text console by default, so you likely will not see text install output. You might want to use --location. See the man page for examples of using --location with CDROM media
+Connected to domain db000
+Escape character is ^]
+error: Disconnected from qemu:///system due to end of file
+error: internal error: client socket is closed
+
+Domain install interrupted.
+Installation aborted at user request
+
+Starting install...
+Domain installation still in progress. Waiting for installation to complete.

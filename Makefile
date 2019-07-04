@@ -73,9 +73,13 @@ ROOTSIZE := 8
 ## in GB
 DBSIZE := 8
 
+## database log volume disk size
+## in GB
+DBLOGSIZE := 8
+
 ## docroot disk size
 ## in GB
-WEBSIZE := 8
+WEBSIZE := 0
 
 ## guest node ram size
 RAM := 1024
@@ -138,6 +142,9 @@ DATADISK := --disk path=$(IMGDIR)/$(SNAME)/data.qcow2,device=disk,bus=virtio
 ## command to pass virt-install for database disk allocation
 DBDISK := --disk path=$(IMGDIR)/$(SNAME)/db.qcow2,device=disk,bus=virtio
 
+## command to pass virt-install for database logdisk allocation
+DBLOGDISK := --disk path=$(IMGDIR)/$(SNAME)/dblog.qcow2,device=disk,bus=virtio
+
 ## command to pass virt-install for document root disk allocation
 WEBDISK := --disk path=$(IMGDIR)/$(SNAME)/docroot.qcow2,device=disk,bus=virtio
 
@@ -154,6 +161,7 @@ endif
 ## if DBSIZE is zero, then do not create DBDISK
 ifeq ($(DBSIZE),0)
 	DBDISK :=
+	DBLOGDISK :=
 endif
 
 ## if WEBSIZE is zero, then do not create WEBDISK
@@ -238,7 +246,7 @@ $(IMGDIR)/$(SNAME)/user-data:
 	cp user-data.tmp2 user-data
 
 ## pull all the disk stuff together
-disks:	rootfs swap data db web
+disks:	rootfs swap data db dblog web
 
 ## create our node root disk
 rootfs:	image 
@@ -260,6 +268,15 @@ $(IMGDIR)/$(SNAME)/data.qcow2:
 	if [ $(DATASIZE) -gt 0 ]; then \
 		qemu-img create -f qcow2 $(IMGDIR)/$(SNAME)/data.qcow2 $(DATASIZE)G; \
 	fi
+
+dblog:	$(IMGDIR)/$(SNAME)/dblog.qcow2 $(IMGDIR)/$(SNAME)/db.qcow2
+
+$(IMGDIR)/$(SNAME)/dblog.qcow2:
+	mkdir -p $(IMGDIR)/$(SNAME)
+	if [ $(DBLOGSIZE) -gt 0 ]; then \
+		qemu-img create -f qcow2 $(IMGDIR)/$(SNAME)/dblog.qcow2 $(DBLOGSIZE)G; \
+	fi
+		
 
 db:	$(IMGDIR)/$(SNAME)/db.qcow2
 
@@ -335,7 +352,7 @@ $(info out is $(out))
 node:	config.iso
 	@:$(call check_defined,NAME)
 
-	virt-install --connect=qemu:///system --name $(SNAME) --ram $(RAM) --vcpus=$(VCPUS) --os-type=linux --os-variant=ubuntu16.04 --disk path=$(IMGDIR)/$(SNAME)/rootfs.qcow2,device=disk,bus=virtio $(SWAPDISK) $(DATADISK) $(DBDISK) $(WEBDISK) --disk path=$(IMGDIR)/$(SNAME)/config.iso,device=cdrom --graphics none --import --wait=-1
+	virt-install --connect=qemu:///system --name $(SNAME) --ram $(RAM) --vcpus=$(VCPUS) --os-type=linux --os-variant=ubuntu16.04 --disk path=$(IMGDIR)/$(SNAME)/rootfs.qcow2,device=disk,bus=virtio $(SWAPDISK) $(DATADISK) $(DBDISK) $(DBLOGDISK) $(WEBDISK) --disk path=$(IMGDIR)/$(SNAME)/config.iso,device=cdrom --graphics none --import --wait=-1
 	sudo echo "$(NAME) ansible_python_interpreter=\"/usr/bin/python3\"" >> /etc/ansible/hosts
 	virsh start $(SNAME)
 

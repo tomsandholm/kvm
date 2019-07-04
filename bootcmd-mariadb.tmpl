@@ -5,3 +5,7 @@ bootcmd:
  - vgcreate vgdb /dev/vdc
  - lvcreate --name db -l 100%FREE vgdb
  - mkfs.ext4 -j /dev/mapper/vgdb-db
+ - pvcreate /dev/vdd
+ - vgcreate vgdblog /dev/vdd
+ - lvcreate --name dblog -l 100%FREE vgdblog
+ - mkfs.ext4 -j /dev/mapper/vgdblog-dblog

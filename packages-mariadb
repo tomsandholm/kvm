@@ -9,3 +9,6 @@ packages:
   - rsync
   - php
   - php-cli
+  - percona-xtrabackup-test
+  - percona-xtrabackup-dbg
+  - percona-xtrabackup
