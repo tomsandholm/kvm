@@ -2,6 +2,14 @@
 #cloud-config
 disable_root: false
 
+write_files:
+  - path: /etc/tom
+    content: |
+      This is data from the installation.
+      This is another line.
+    owner: root:root
+    permissions: '0644'
+
 #MOUNTS
 
 #PACKAGES

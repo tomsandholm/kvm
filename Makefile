@@ -71,11 +71,11 @@ ROOTSIZE := 8
 
 ## database disk size
 ## in GB
-DBSIZE := 8
+DBSIZE := 0
 
 ## database log volume disk size
 ## in GB
-DBLOGSIZE := 8
+DBLOGSIZE := 0
 
 ## docroot disk size
 ## in GB
@@ -95,6 +95,9 @@ ETCDIR := /etc/kvmbld
 
 ## where we store virtual nodes stuff 
 VARDIR := /var/lib/kvmbld
+
+## where we store extra data
+DATADIR := /data/virt
 
 ## base images directory, used as backing store for qcow2 images
 BASEDIR := $(VARDIR)/base
@@ -137,7 +140,7 @@ CSSECONDARY := $(SNAME)2
 SWAPDISK := --disk path=$(IMGDIR)/$(SNAME)/swap.qcow2,device=disk,bus=virtio
 
 ## command to pass virt-install for data disk allocation
-DATADISK := --disk path=$(IMGDIR)/$(SNAME)/data.qcow2,device=disk,bus=virtio
+DATADISK := --disk path=$(DATADIR)/$(SNAME)/data.qcow2,device=disk,bus=virtio
 
 ## command to pass virt-install for database disk allocation
 DBDISK := --disk path=$(IMGDIR)/$(SNAME)/db.qcow2,device=disk,bus=virtio
@@ -168,8 +171,6 @@ endif
 ifeq ($(WEBSIZE),0)
 	WEBDISK :=
 endif
-
-
 
 ## target to list stuff
 stats:
@@ -261,12 +262,12 @@ $(IMGDIR)/$(SNAME)/swap.qcow2:
 	fi
 
 ## create our node data disk
-data:	$(IMGDIR)/$(SNAME)/data.qcow2
+data:	$(DATADIR)/$(SNAME)/data.qcow2
 
-$(IMGDIR)/$(SNAME)/data.qcow2:
-	mkdir -p $(IMGDIR)/$(SNAME)
+$(DATADIR)/$(SNAME)/data.qcow2:
+	mkdir -p $(DATADIR)/$(SNAME)
 	if [ $(DATASIZE) -gt 0 ]; then \
-		qemu-img create -f qcow2 $(IMGDIR)/$(SNAME)/data.qcow2 $(DATASIZE)G; \
+		qemu-img create -f qcow2 $(DATADIR)/$(SNAME)/data.qcow2 $(DATASIZE)G; \
 	fi
 
 dblog:	$(IMGDIR)/$(SNAME)/dblog.qcow2 $(IMGDIR)/$(SNAME)/db.qcow2
@@ -297,7 +298,7 @@ $(IMGDIR)/$(SNAME)/docroot.qcow2:
 
 ## create our installation cdrom
 config.iso:	role disks network-config
-	genisoimage -o $(IMGDIR)/$(SNAME)/config.iso -V cidata -r -J $(IMGDIR)/$(SNAME)/meta-data $(IMGDIR)/$(SNAME)/user-data $(IMGDIR)/$(SNAME)/network-config
+	genisoimage -o $(IMGDIR)/$(SNAME)/config.iso -V cidata -r -J $(IMGDIR)/$(SNAME)/meta-data $(IMGDIR)/$(SNAME)/user-data $(IMGDIR)/$(SNAME)/network-config 
 
 
 ## create the network configuration
@@ -337,6 +338,7 @@ Delete:
 	virsh destroy $(SNAME) || echo "Node stop failed for $(SNAME)"
 	virsh undefine $(SNAME) --remove-all-storage
 	rm -rf $(IMGDIR)/$(SNAME)
+	rm -rf $(DATADIR)/$(SNAME)
 	sudo sed -i "/^$(NAME).*/d" /etc/ansible/hosts
 	make -e NAME=$(NAME) clean-image
 

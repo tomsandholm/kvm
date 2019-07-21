@@ -1,0 +1,30 @@
+#! /bin/bash
+# vi:set nu ai ap aw smd showmatch tabstop=4 shiftwidth=4:
+
+max=${1?Must specify max}
+
+# load first name array
+first=( $(<./first) )
+firstlen=${#first[*]}
+echo "First Size: $firstlen"
+
+# load last name array
+last=( $(<./last) )
+lastlen=${#last[*]}
+echo "Last Size: $lastlen"
+
+> output
+(( z=0 ))
+for (( f=0;f<$firstlen;f++ ))
+do
+	for (( l=0;l<$lastlen;l++ ))
+	do
+		echo "${first[$f]} ${last[$l]}" >> ./output
+		(( z++ ))
+		if [ $z -eq $max ]
+		then
+			echo "Z: $z"
+			exit 0
+		fi
+	done
+done

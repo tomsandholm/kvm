@@ -2,44 +2,41 @@
 #cloud-config
 disable_root: false
 
+write_files:
+  - path: /etc/tom
+    content: |
+      This is data from the installation.
+      This is another line.
+    owner: root:root
+    permissions: '0644'
+
 #MOUNTS
 mounts:
   - ["/dev/vdb", "none", "swap", "sw", "0", "0"]
-  - ["/dev/mapper/vgdb-db", "/var/lib/mysql", "ext4", "defaults", "1", "1"]
-  - ["/dev/mapper/vgdblog-dblog", "/var/log/mysql", "ext4", "defaults", "1", "1"]
+  - ["/dev/mapper/web-docroot", "/var/www/",  "auto", "defaults", "0", "0"]
 
 #PACKAGES
-# packages-nginx
+# packages-general
 packages:
   - python3
   - lsof
   - netcat
   - xinetd
   - zip
-  - mariadb-server
-  - rsync
-  - php
-  - php-cli
+  - apache2
+  - apt-mirror
 
 #BOOTCMD
 bootcmd:
  - mkswap /dev/vdb
  - swapon /dev/vdb
  - pvcreate /dev/vdc
- - vgcreate vgdb /dev/vdc
- - lvcreate --name db -l 100%FREE vgdb
- - mkfs.ext4 -j /dev/mapper/vgdb-db
- - pvcreate /dev/vdd
- - vgcreate vgdblog /dev/vdd
- - lvcreate --name dblog -l 100%FREE vgdblog
- - mkfs.ext4 -j /dev/mapper/vgdblog-dblog
+ - vgcreate web /dev/vdc
+ - lvcreate --name docroot -l 100%FREE web
+ - mke2fs -j /dev/web/docroot
+ 
 
 #APT
-apt:
-  sources:
-    mariadb.list:
-      source: "deb [arch=amd64] http://mirrors.accretive-networks.net/mariadb/repo/10.3/ubuntu xenial main"
-      keyid: F1656F24C74CD1D8
 
 ntp:
   enabled: true
@@ -72,12 +69,9 @@ runcmd:
   - update-grub
   - apt autoremove -y
   - touch /etc/cloud/cloud-init.disabled
-  - mysqladmin -u root password theresa1 
-  - sed -i 's/^bind-address.*/bind-address = 0.0.0.0/g' /etc/mysql/my.cnf
-  - mysql -u root --password=theresa1 -e "use mysql; CREATE USER '{{ ds.meta_data.remuser }}'@'localhost' IDENTIFIED BY '{{ ds.meta_data.remuserpsw }}';"
-  - mysql -u root --password=theresa1 -e "use mysql; CREATE USER '{{ ds.meta_data.remuser }}'@'%' IDENTIFIED BY '{{ ds.meta_data.remuserpsw }}';"
-  - mysql -u root --password=theresa1 -e "use mysql; GRANT ALL ON *.* TO '{{ ds.meta_data.remuser }}'@'localhost';"
-  - mysql -u root --password=theresa1 -e "use mysql; GRANT ALL ON *.* TO '{{ ds.meta_data.remuser }}'@'%';"
-  - systemctl 
   - eject
+  - mkdir -p /var/www/html/ubuntu/var
+  - chown -R www-data:www-data /var/www
+  - cp /etc/apt/mirror.list /etc/apt/mirror.list.orig
+  - sed -i 's/^.*base_path.*$/set base_path /var/www/html/ubuntu' /etc/apt/mirror.list
   - shutdown -h now
