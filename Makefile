@@ -82,10 +82,10 @@ DBLOGSIZE := 0
 WEBSIZE := 0
 
 ## guest node ram size
-RAM := 1024
+RAM := 4096
 
 ## guest node cpu coount
-VCPUS := 1
+VCPUS := 4
 
 ## guest node os type
 OS-VARIANT := ubuntu16.04
@@ -298,7 +298,7 @@ $(IMGDIR)/$(SNAME)/docroot.qcow2:
 
 ## create our installation cdrom
 config.iso:	role disks network-config
-	genisoimage -o $(IMGDIR)/$(SNAME)/config.iso -V cidata -r -J $(IMGDIR)/$(SNAME)/meta-data $(IMGDIR)/$(SNAME)/user-data $(IMGDIR)/$(SNAME)/network-config 
+	genisoimage -o $(IMGDIR)/$(SNAME)/config.iso -V cidata -r -J $(IMGDIR)/$(SNAME)/meta-data $(IMGDIR)/$(SNAME)/user-data $(IMGDIR)/$(SNAME)/network-config vendor-data
 
 
 ## create the network configuration
@@ -356,6 +356,7 @@ node:	config.iso
 
 	virt-install --connect=qemu:///system --name $(SNAME) --ram $(RAM) --vcpus=$(VCPUS) --os-type=linux --os-variant=ubuntu16.04 --disk path=$(IMGDIR)/$(SNAME)/rootfs.qcow2,device=disk,bus=virtio $(SWAPDISK) $(DATADISK) $(DBDISK) $(DBLOGDISK) $(WEBDISK) --disk path=$(IMGDIR)/$(SNAME)/config.iso,device=cdrom --graphics none --import --wait=-1
 	sudo echo "$(NAME) ansible_python_interpreter=\"/usr/bin/python3\"" >> /etc/ansible/hosts
+	guestfish -a $(IMGDIR)/$(SNAME)/rootfs.qcow2 -i upload gpg-setup /root/gpg-setup
 	virsh start $(SNAME)
 
 galera:

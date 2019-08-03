@@ -13,7 +13,6 @@ write_files:
 #MOUNTS
 mounts:
   - ["/dev/vdb", "none", "swap", "sw", "0", "0"]
-  - ["/dev/mapper/web-docroot", "/var/www/",  "auto", "defaults", "0", "0"]
 
 #PACKAGES
 # packages-general
@@ -23,18 +22,11 @@ packages:
   - netcat
   - xinetd
   - zip
-  - apache2
-  - apt-mirror
 
 #BOOTCMD
 bootcmd:
  - mkswap /dev/vdb
  - swapon /dev/vdb
- - pvcreate /dev/vdc
- - vgcreate web /dev/vdc
- - lvcreate --name docroot -l 100%FREE web
- - mke2fs -j /dev/web/docroot
- 
 
 #APT
 
@@ -70,8 +62,4 @@ runcmd:
   - apt autoremove -y
   - touch /etc/cloud/cloud-init.disabled
   - eject
-  - mkdir -p /var/www/html/ubuntu/var
-  - chown -R www-data:www-data /var/www
-  - cp /etc/apt/mirror.list /etc/apt/mirror.list.orig
-  - sed -i 's/^.*base_path.*$/set base_path /var/www/html/ubuntu' /etc/apt/mirror.list
   - shutdown -h now

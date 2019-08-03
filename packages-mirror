@@ -6,6 +6,4 @@ packages:
   - xinetd
   - zip
   - apache2
-  - dpkg-dev
-  - dpkg-sig
-  - haveged
+  - apt-mirror

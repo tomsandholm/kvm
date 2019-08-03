@@ -5,8 +5,8 @@ runcmd:
   - apt autoremove -y
   - touch /etc/cloud/cloud-init.disabled
   - eject
-  - mkdir -p /var/www/html/ubuntu/var
-  - chown -R www-data:www-data /var/www
-  - cp /etc/apt/mirror.list /etc/apt/mirror.list.orig
-  - sed -i 's@^.*base_path.*@set base_path /var/www/html/ubuntu@gp' /etc/apt/mirror.list
+  - mkdir -p /var/www/html/repo/
+  - mkdir /root/.gnupg
+  - echo "cert-digest-algo SHA256" >> /root/.gnupg/gpg.conf
+  - echo "digest-algo SHA256" >> /root/.gnupg/gpg.conf
   - shutdown -h now
