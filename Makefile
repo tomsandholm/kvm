@@ -36,6 +36,9 @@ targets:
 #DISTRO := xenial
 DISTRO := bionic
 
+## graphics
+GRAPHICS := none
+
 ## derived from NAME, a required env variable
 SNAME = $(shell echo $(NAME) | cut -d'.' -f1)
 
@@ -354,9 +357,8 @@ $(info out is $(out))
 node:	config.iso
 	@:$(call check_defined,NAME)
 
-	virt-install --connect=qemu:///system --name $(SNAME) --ram $(RAM) --vcpus=$(VCPUS) --os-type=linux --os-variant=ubuntu16.04 --disk path=$(IMGDIR)/$(SNAME)/rootfs.qcow2,device=disk,bus=virtio $(SWAPDISK) $(DATADISK) $(DBDISK) $(DBLOGDISK) $(WEBDISK) --disk path=$(IMGDIR)/$(SNAME)/config.iso,device=cdrom --graphics none --import --wait=-1
+	virt-install --connect=qemu:///system --name $(SNAME) --ram $(RAM) --vcpus=$(VCPUS) --os-type=linux --os-variant=ubuntu16.04 --disk path=$(IMGDIR)/$(SNAME)/rootfs.qcow2,device=disk,bus=virtio $(SWAPDISK) $(DATADISK) $(DBDISK) $(DBLOGDISK) $(WEBDISK) --disk path=$(IMGDIR)/$(SNAME)/config.iso,device=cdrom --graphics $(GRAPHICS) --import --wait=-1
 	sudo echo "$(NAME) ansible_python_interpreter=\"/usr/bin/python3\"" >> /etc/ansible/hosts
-	guestfish -a $(IMGDIR)/$(SNAME)/rootfs.qcow2 -i upload gpg-setup /root/gpg-setup
 	virsh start $(SNAME)
 
 galera:
